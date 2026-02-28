@@ -20,6 +20,7 @@ import GlobalSearch from './ui/GlobalSearch.js';
 import MobileControls from './ui/MobileControls.js';
 import StatusBar from './ui/StatusBar.js';
 import DropdownLimiter from './utils/DropdownLimiter.js';
+import BoundaryLayerManager from './map/BoundaryLayerManager.js';
 
 class CoastalMapApplication {
     constructor() {
@@ -39,6 +40,7 @@ class CoastalMapApplication {
         this.mobileControls = null;
         this.statusBar = null;
         this.dropdownLimiter = null;
+        this.boundaryLayerManager = null;
     }
 
     async init() {
@@ -66,6 +68,10 @@ class CoastalMapApplication {
 
             this.statusBar = new StatusBar(this.eventBus, this.stateManager);
             this.statusBar.init(map);
+
+            // Boundary overlays load async in background; control appears immediately
+            this.boundaryLayerManager = new BoundaryLayerManager(map, this.eventBus);
+            this.boundaryLayerManager.init();
 
             this.modalManager.init();
             this.uiController.init();

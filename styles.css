@@ -4391,3 +4391,135 @@ body.modal-open {
         margin-top: 0.5rem !important;
     }
 }
+
+/* ═══════════════════════════════════════════════════════════════════
+   Boundary Layer Control  (topright floating panel)
+   ═══════════════════════════════════════════════════════════════════ */
+
+.boundary-layer-control {
+    position: relative;
+    font-family: inherit;
+}
+
+/* The map-button that opens the panel */
+.boundary-ctrl-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    padding: 0;
+    background: #ffffff;
+    border: none;
+    border-radius: 0;
+    color: #333333;
+    cursor: pointer;
+    transition: background var(--transition-fast), color var(--transition-fast);
+}
+
+.boundary-ctrl-btn:hover,
+.boundary-ctrl-btn.active {
+    background: #000000;
+    color: #ffffff;
+}
+
+/* Dropdown panel */
+.boundary-ctrl-panel {
+    display: none;              /* hidden by default */
+    position: absolute;
+    top: 0;
+    right: 38px;                /* open to the left of the button */
+    min-width: 210px;
+    background: #ffffff;
+    border: 1px solid #333333;
+    box-shadow: var(--shadow-md);
+    z-index: 800;
+}
+
+.boundary-ctrl-panel.open {
+    display: block;
+}
+
+.boundary-panel-header {
+    padding: 0.55rem 0.85rem;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    border-bottom: 1px solid #e5e5e5;
+    background: #fafafa;
+}
+
+/* Each toggle row */
+.boundary-panel-row {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.55rem 0.85rem;
+    cursor: pointer;
+    transition: background var(--transition-fast);
+    user-select: none;
+}
+
+.boundary-panel-row:hover {
+    background: #f5f5f5;
+}
+
+.boundary-panel-row:not(:last-child) {
+    border-bottom: 1px solid #f0f0f0;
+}
+
+/* Checkbox – keep native look but ensure consistent sizing */
+.boundary-panel-checkbox {
+    flex-shrink: 0;
+    width: 14px;
+    height: 14px;
+    accent-color: #000000;
+    cursor: pointer;
+    margin: 0;
+}
+
+/* Colour swatch (border-only square matching the layer outline colour) */
+.boundary-panel-swatch {
+    flex-shrink: 0;
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    border: 2px solid currentColor;
+    background: transparent;
+}
+
+/* Label text */
+.boundary-panel-label {
+    font-size: 0.82rem;
+    color: var(--text-primary);
+    line-height: 1.3;
+}
+
+/* Leaflet tooltip for boundary features */
+.boundary-tooltip {
+    background: rgba(255, 255, 255, 0.92);
+    border: 1px solid #cccccc;
+    border-radius: 0;
+    color: #111111;
+    font-size: 0.78rem;
+    font-family: inherit;
+    padding: 3px 7px;
+    box-shadow: var(--shadow-sm);
+    white-space: nowrap;
+}
+
+.boundary-tooltip::before {
+    display: none;              /* hide the default Leaflet tooltip arrow */
+}
+
+/* Mobile: panel opens below the button on very narrow screens */
+@media (max-width: 480px) {
+    .boundary-ctrl-panel {
+        right: auto;
+        left: 0;
+        top: 38px;
+        min-width: 190px;
+    }
+}
