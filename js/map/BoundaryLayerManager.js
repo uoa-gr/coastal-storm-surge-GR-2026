@@ -140,7 +140,7 @@ class BoundaryLayerManager {
         const configs = this.layerConfig;
 
         const BoundaryControl = L.Control.extend({
-            options: { position: 'topright' },
+            options: { position: 'topleft' },
 
             onAdd() {
                 const container = L.DomUtil.create('div', 'boundary-layer-control leaflet-bar');
@@ -153,14 +153,15 @@ class BoundaryLayerManager {
                 btn.title = 'Διοικητικά Όρια';
                 btn.setAttribute('aria-label', 'Εναλλαγή διοικητικών ορίων');
                 btn.setAttribute('aria-expanded', 'false');
+                // Stacked layers icon (GIS convention)
                 btn.innerHTML = `
                     <svg width="17" height="17" viewBox="0 0 24 24" fill="none"
                          stroke="currentColor" stroke-width="1.9"
                          stroke-linecap="round" stroke-linejoin="round"
                          aria-hidden="true" focusable="false">
-                        <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/>
-                        <line x1="8" y1="2" x2="8" y2="18"/>
-                        <line x1="16" y1="6" x2="16" y2="22"/>
+                        <path d="M12 2L2 7l10 5 10-5z"/>
+                        <path d="M2 12l10 5 10-5"/>
+                        <path d="M2 17l10 5 10-5"/>
                     </svg>`;
 
                 // ── Dropdown panel ─────────────────────────────────────────

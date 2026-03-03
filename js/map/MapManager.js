@@ -171,11 +171,15 @@ class MapManager {
                 btn.type = 'button';
                 btn.setAttribute('aria-label', 'Υπόβαθρο χάρτη');
                 btn.title = 'Υπόβαθρο χάρτη';
+                // Landscape/photo icon — represents a background imagery basemap
                 btn.innerHTML = `
-                    <svg class="basemap-picker-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-                        <path d="M3 6l6-3 6 3 6-3v15l-6 3-6-3-6 3V6z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" />
-                        <path d="M9 3v15" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" />
-                        <path d="M15 6v15" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" />
+                    <svg class="basemap-picker-icon" viewBox="0 0 24 24" fill="none"
+                         stroke="currentColor" stroke-width="1.5"
+                         stroke-linecap="round" stroke-linejoin="round"
+                         aria-hidden="true" focusable="false">
+                        <rect x="3" y="4" width="18" height="16" rx="1.5"/>
+                        <polyline points="3 15 8 10 13 14 16 11 21 15"/>
+                        <circle cx="8.5" cy="8.5" r="1.5"/>
                     </svg>
                 `;
 
@@ -248,6 +252,21 @@ class MapManager {
         const list = container.querySelector('.leaflet-control-layers-list');
 
         if (!toggle || !list) return;
+
+        // Replace Leaflet's default sprite icon with our basemap icon
+        toggle.style.backgroundImage = 'none';
+        toggle.style.display = 'flex';
+        toggle.style.alignItems = 'center';
+        toggle.style.justifyContent = 'center';
+        toggle.innerHTML = `
+            <svg class="basemap-picker-icon" viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="1.5"
+                 stroke-linecap="round" stroke-linejoin="round"
+                 aria-hidden="true" focusable="false">
+                <rect x="3" y="4" width="18" height="16" rx="1.5"/>
+                <polyline points="3 15 8 10 13 14 16 11 21 15"/>
+                <circle cx="8.5" cy="8.5" r="1.5"/>
+            </svg>`;
 
         // Add click-only class to disable hover
         container.classList.add('leaflet-control-layers-click');
