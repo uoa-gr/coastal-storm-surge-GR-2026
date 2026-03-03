@@ -1256,9 +1256,8 @@ body.sidebar-collapsed .rail-btn:hover {
 
 .basemap-picker-panel {
     position: absolute;
-    top: 100%;
-    left: 0;
-    margin-top: 6px;
+    top: 0;
+    left: 38px;             /* opens to the right of the button, like boundary panel */
     background: #fff;
     border: 1px solid var(--border-color);
     box-shadow: var(--shadow-md);
