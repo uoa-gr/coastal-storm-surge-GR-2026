@@ -1095,7 +1095,7 @@ body.sidebar-collapsed .rail-btn:hover {
 .status-bar-left-col {
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
+    align-items: stretch;
     gap: 0.6rem;
 }
 
@@ -1213,22 +1213,6 @@ body.sidebar-collapsed .rail-btn:hover {
     cursor: pointer;
 }
 
-/* Click-based layer control - disable hover */
-.leaflet-control-layers-click .leaflet-control-layers-list {
-    display: none;
-}
-
-.leaflet-control-layers-click:hover .leaflet-control-layers-list {
-    display: none;
-}
-
-.leaflet-control-layers-click.leaflet-control-layers-expanded .leaflet-control-layers-list {
-    display: block;
-}
-
-.leaflet-control-layers-click.leaflet-control-layers-expanded .leaflet-control-layers-toggle {
-    display: none;
-}
 
 /* ===== MOBILE BASEMAP PICKER (touch-friendly) ===== */
 .basemap-picker {
@@ -4443,7 +4427,7 @@ body.modal-open {
     display: none;              /* hidden by default */
     position: absolute;
     top: 0;
-    right: 38px;                /* open to the left of the button */
+    left: 38px;                 /* open to the right of the button, inside the map */
     min-width: 210px;
     background: #ffffff;
     border: 1px solid #333333;
@@ -4532,7 +4516,6 @@ body.modal-open {
 /* Mobile: panel opens below the button on very narrow screens */
 @media (max-width: 480px) {
     .boundary-ctrl-panel {
-        right: auto;
         left: 0;
         top: 38px;
         min-width: 190px;

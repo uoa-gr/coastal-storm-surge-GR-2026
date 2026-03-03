@@ -119,39 +119,12 @@ class MapManager {
             this.measurementTool = new window.MeasurementTool(this.map);
         }
 
-        // Basemap selector
-        // On touch/mobile, Leaflet's built-in layers control can be flaky due to mixed pointer/touch/click behaviors.
-        // Use a small custom picker that is designed for tap interactions.
-        if (this.isTouchDevice()) {
-            this.addMobileBasemapPicker();
-        } else {
-            // Desktop: keep the standard Leaflet layers control.
-            const layerControl = L.control.layers(this.baseMaps, null, {
-                position: 'topleft',
-                collapsed: true
-            }).addTo(this.map);
-
-            // Make layer control click-based instead of hover
-            this.setupClickBasedLayerControl(layerControl);
-        }
+        // Basemap selector — custom click-based picker for all devices
+        this.addMobileBasemapPicker();
     }
 
     /**
-     * Detect touch/coarse pointer devices.
-     * @private
-     */
-    isTouchDevice() {
-        return (
-            typeof window !== 'undefined' &&
-            (
-                'ontouchstart' in window ||
-                (window.matchMedia && window.matchMedia('(pointer: coarse)').matches)
-            )
-        );
-    }
-
-    /**
-     * Add a tap-friendly basemap picker for mobile.
+     * Add a custom click-based basemap picker.
      * @private
      */
     addMobileBasemapPicker() {
@@ -240,92 +213,6 @@ class MapManager {
         });
 
         this.map.addControl(new BasemapPickerControl());
-    }
-
-    /**
-     * Setup click-based behavior for layer control
-     * @private
-     */
-    setupClickBasedLayerControl(layerControl) {
-        const container = layerControl.getContainer();
-        const toggle = container.querySelector('.leaflet-control-layers-toggle');
-        const list = container.querySelector('.leaflet-control-layers-list');
-
-        if (!toggle || !list) return;
-
-        // Replace Leaflet's default sprite icon with our basemap icon
-        toggle.style.backgroundImage = 'none';
-        toggle.style.display = 'flex';
-        toggle.style.alignItems = 'center';
-        toggle.style.justifyContent = 'center';
-        toggle.innerHTML = `
-            <svg class="basemap-picker-icon" viewBox="0 0 24 24" fill="none"
-                 stroke="currentColor" stroke-width="1.5"
-                 stroke-linecap="round" stroke-linejoin="round"
-                 aria-hidden="true" focusable="false">
-                <rect x="3" y="4" width="18" height="16" rx="1.5"/>
-                <polyline points="3 15 8 10 13 14 16 11 21 15"/>
-                <circle cx="8.5" cy="8.5" r="1.5"/>
-            </svg>`;
-
-        // Add click-only class to disable hover
-        container.classList.add('leaflet-control-layers-click');
-
-        // Prevent the map from hijacking taps on the control (esp. mobile)
-        L.DomEvent.disableClickPropagation(container);
-        L.DomEvent.disableScrollPropagation(container);
-
-        // Guard against "double toggle" on mobile where pointer/touch AND click both fire.
-        let lastToggleAt = 0;
-
-        const toggleExpanded = (e) => {
-            const now = Date.now();
-            lastToggleAt = now;
-
-            e.preventDefault?.();
-            e.stopPropagation?.();
-            container.classList.toggle('leaflet-control-layers-expanded');
-        };
-
-        // Primary: pointerdown for modern mobile + desktop; prevents the follow-up click from toggling back.
-        toggle.addEventListener('pointerdown', toggleExpanded);
-
-        // Fallback: touchstart for older iOS that may not emit pointer events.
-        toggle.addEventListener('touchstart', (e) => {
-            // If pointerdown already handled recently, ignore.
-            if (Date.now() - lastToggleAt < 400) return;
-            toggleExpanded(e);
-        }, { passive: false });
-
-        // Click guard: ignore a click that immediately follows a pointer/touch toggle.
-        toggle.addEventListener('click', (e) => {
-            if (Date.now() - lastToggleAt < 400) {
-                e.preventDefault?.();
-                e.stopPropagation?.();
-                return;
-            }
-            toggleExpanded(e);
-        });
-
-        // Close when clicking outside
-        document.addEventListener('click', (e) => {
-            if (!container.contains(e.target)) {
-                container.classList.remove('leaflet-control-layers-expanded');
-            }
-        });
-
-        // Close when selecting a layer
-        list.addEventListener('click', () => {
-            setTimeout(() => {
-                container.classList.remove('leaflet-control-layers-expanded');
-            }, 100);
-        });
-
-        list.addEventListener('touchstart', () => {
-            setTimeout(() => {
-                container.classList.remove('leaflet-control-layers-expanded');
-            }, 100);
-        }, { passive: true });
     }
 
     /**
