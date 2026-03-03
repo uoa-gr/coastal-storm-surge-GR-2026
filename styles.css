@@ -1077,23 +1077,31 @@ body.sidebar-collapsed .rail-btn:hover {
     bottom: 0;
     left: 0;
     right: 0;
-    background: #ffffff;
+    background: transparent;
     color: #1e1e1e;
     font-size: 0.75rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0.25rem 0.75rem;
+    padding: 0 0.75rem 0.5rem;
     z-index: 1000;
     flex-wrap: wrap;
     gap: 0.5rem;
-    border-top: 1px solid var(--border-color);
+    pointer-events: none;
+}
+
+.map-status-bar > * {
+    pointer-events: auto;
 }
 
 .status-bar-left {
     display: flex;
     align-items: center;
     gap: 1rem;
+    background: #ffffff;
+    border-radius: 6px;
+    padding: 0.2rem 0.6rem;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.12);
 }
 
 .status-bar-legend {
@@ -1102,6 +1110,10 @@ body.sidebar-collapsed .rail-btn:hover {
     gap: 0.4rem;
     font-size: 0.7rem;
     color: #1e1e1e;
+    background: #ffffff;
+    border-radius: 6px;
+    padding: 0.2rem 0.75rem;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.12);
 }
 
 .legend-dot {
@@ -1132,6 +1144,10 @@ body.sidebar-collapsed .rail-btn:hover {
     display: flex;
     align-items: center;
     gap: 1rem;
+    background: #ffffff;
+    border-radius: 6px;
+    padding: 0.2rem 0.75rem;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.12);
 }
 
 .status-item {
@@ -1328,7 +1344,7 @@ body.sidebar-collapsed .rail-btn:hover {
 @media (max-width: 480px) {
     .map-status-bar {
         font-size: 0.65rem;
-        padding: 0.2rem 0.5rem;
+        padding: 0 0.5rem 0.4rem;
     }
 
     .status-label {
