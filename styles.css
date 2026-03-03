@@ -4277,7 +4277,8 @@ body.modal-open {
 
 .filter-modal-option {
     display: flex;
-    align-items: center;
+    flex-direction: column;
+    align-items: flex-start;
     padding: clamp(0.45rem, 1.4vh, 0.75rem) 1rem;
     border-bottom: 1px solid var(--border-light);
     cursor: pointer;
@@ -4286,6 +4287,17 @@ body.modal-open {
     /* Prevent long values from overflowing horizontally */
     overflow-wrap: anywhere;
     word-break: break-word;
+}
+
+.filter-modal-option-primary {
+    line-height: 1.3;
+}
+
+.filter-modal-option-secondary {
+    font-size: 0.75em;
+    color: #666;
+    margin-top: 0.1rem;
+    line-height: 1.2;
 }
 
 .filter-modal-option:last-child {

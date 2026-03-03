@@ -22,6 +22,11 @@ class FilterManager {
         // All filter options (unfiltered, for showing unavailable)
         this.allOptions = {};
 
+        // Lookup map for location → municipality (built lazily)
+        this.locationMunicipalityMap = null;
+        // Sub-label getter for the currently open modal (set per openFilterModal call)
+        this._activeGetSubLabel = null;
+
         // Currently active filter in modal
         this.activeFilterKey = null;
 
@@ -198,11 +203,31 @@ class FilterManager {
         });
     }
 
+    _buildLocationMunicipalityMap() {
+        const map = new Map();
+        for (const record of this.dataManager.allFloodData || []) {
+            if (record.location_name && record.municipality) {
+                map.set(String(record.location_name), String(record.municipality));
+            }
+        }
+        return map;
+    }
+
     openFilterModal(filterKey) {
         this.activeFilterKey = filterKey;
         const config = this.filterConfig[filterKey];
 
         if (!config || !this.modalElements.modal) return;
+
+        // Build municipality sub-label lookup for the location filter
+        if (filterKey === 'location') {
+            if (!this.locationMunicipalityMap) {
+                this.locationMunicipalityMap = this._buildLocationMunicipalityMap();
+            }
+            this._activeGetSubLabel = (value) => this.locationMunicipalityMap.get(String(value)) || null;
+        } else {
+            this._activeGetSubLabel = null;
+        }
 
         // Set title
         if (this.modalElements.title) {
@@ -255,54 +280,72 @@ class FilterManager {
         const unavailableOptions = allOptionsList.filter(v => !availableSet.has(String(v)));
 
         // Render available options
-        this.renderModalList(availableOptions, currentValue, false, config);
+        this.renderModalList(availableOptions, currentValue, false, config, this._activeGetSubLabel);
 
         // Render unavailable options
-        this.renderUnavailableList(unavailableOptions, config);
+        this.renderUnavailableList(unavailableOptions, config, this._activeGetSubLabel);
     }
 
-    renderModalList(options, currentValue, isFiltered = false, config = null) {
+    _buildOptionEl(value, config, getSubLabel, className, onClick) {
+        const div = document.createElement('div');
+        div.className = className;
+
+        const displayValue = config?.formatValue ? config.formatValue(value) : value;
+        const subLabel = getSubLabel ? getSubLabel(value) : null;
+
+        if (subLabel) {
+            const primary = document.createElement('span');
+            primary.className = 'filter-modal-option-primary';
+            primary.textContent = displayValue;
+
+            const secondary = document.createElement('span');
+            secondary.className = 'filter-modal-option-secondary';
+            secondary.textContent = `Δήμος ${subLabel}`;
+
+            div.appendChild(primary);
+            div.appendChild(secondary);
+        } else {
+            div.textContent = displayValue;
+        }
+
+        if (onClick) {
+            div.dataset.value = value;
+            div.addEventListener('click', onClick);
+        }
+
+        return div;
+    }
+
+    renderModalList(options, currentValue, isFiltered = false, config = null, getSubLabel = null) {
         const list = this.modalElements.list;
         if (!list) return;
 
-        list.innerHTML = '';
+        list.replaceChildren();
 
         if (options.length === 0 && (!currentValue || currentValue === '')) {
-            list.innerHTML = '<div class="filter-modal-no-results">Δεν υπάρχουν διαθέσιμες επιλογές</div>';
+            const empty = document.createElement('div');
+            empty.className = 'filter-modal-no-results';
+            empty.textContent = 'Δεν υπάρχουν διαθέσιμες επιλογές';
+            list.appendChild(empty);
             return;
         }
 
         // If a value is selected, show it first as "selected" (not clickable)
         if (currentValue && currentValue !== '') {
-            const selectedDiv = document.createElement('div');
-            selectedDiv.className = 'filter-modal-option selected-current';
-            const displayValue = config?.formatValue ? config.formatValue(currentValue) : currentValue;
-            selectedDiv.textContent = displayValue;
+            const selectedDiv = this._buildOptionEl(currentValue, config, getSubLabel, 'filter-modal-option selected-current', null);
             selectedDiv.title = 'Τρέχουσα επιλογή - πατήστε "Καθαρισμός Επιλογής" για αλλαγή';
             list.appendChild(selectedDiv);
         }
 
         // Show remaining available options (excluding the selected one)
         options.forEach(value => {
-            // Skip the currently selected value as it's shown above
-            if (String(value) === String(currentValue)) {
-                return;
-            }
-
-            const div = document.createElement('div');
-            div.className = 'filter-modal-option';
-
-            const displayValue = config?.formatValue ? config.formatValue(value) : value;
-            div.textContent = displayValue;
-            div.dataset.value = value;
-
-            div.addEventListener('click', () => this.selectFilterValue(value));
-
+            if (String(value) === String(currentValue)) return;
+            const div = this._buildOptionEl(value, config, getSubLabel, 'filter-modal-option', () => this.selectFilterValue(value));
             list.appendChild(div);
         });
     }
 
-    renderUnavailableList(options, config = null) {
+    renderUnavailableList(options, config = null, getSubLabel = null) {
         const section = this.modalElements.unavailableSection;
         const list = this.modalElements.unavailableList;
 
@@ -314,15 +357,10 @@ class FilterManager {
         }
 
         section.classList.remove('hidden');
-        list.innerHTML = '';
+        list.replaceChildren();
 
         options.forEach(value => {
-            const div = document.createElement('div');
-            div.className = 'filter-modal-option unavailable';
-
-            const displayValue = config?.formatValue ? config.formatValue(value) : value;
-            div.textContent = displayValue;
-
+            const div = this._buildOptionEl(value, config, getSubLabel, 'filter-modal-option unavailable', null);
             list.appendChild(div);
         });
     }
@@ -337,21 +375,27 @@ class FilterManager {
         const availableOptions = this.currentOptions[optionsKey] || [];
         const allOptionsList = this.allOptions[optionsKey] || availableOptions;
         const currentValue = this.filterElements[this.activeFilterKey]?.value || '';
+        const getSubLabel = this._activeGetSubLabel;
 
-        // Filter available options
-        const filteredAvailable = searchTerm
-            ? availableOptions.filter(v => String(v).toLowerCase().includes(searchTerm))
-            : availableOptions;
+        const matches = (v) => {
+            if (!searchTerm) return true;
+            if (String(v).toLowerCase().includes(searchTerm)) return true;
+            // Also match against the municipality sub-label when available
+            if (getSubLabel) {
+                const sub = (getSubLabel(v) || '').toLowerCase();
+                if (sub.includes(searchTerm)) return true;
+            }
+            return false;
+        };
 
-        // Filter unavailable options
+        const filteredAvailable = availableOptions.filter(matches);
+
         const availableSet = new Set(availableOptions.map(v => String(v)));
         const unavailableOptions = allOptionsList.filter(v => !availableSet.has(String(v)));
-        const filteredUnavailable = searchTerm
-            ? unavailableOptions.filter(v => String(v).toLowerCase().includes(searchTerm))
-            : unavailableOptions;
+        const filteredUnavailable = unavailableOptions.filter(matches);
 
-        this.renderModalList(filteredAvailable, currentValue, true, config);
-        this.renderUnavailableList(filteredUnavailable, config);
+        this.renderModalList(filteredAvailable, currentValue, true, config, getSubLabel);
+        this.renderUnavailableList(filteredUnavailable, config, getSubLabel);
     }
 
     async selectFilterValue(value) {
