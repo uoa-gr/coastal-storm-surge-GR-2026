@@ -1218,6 +1218,12 @@ body.sidebar-collapsed .rail-btn:hover {
 .basemap-picker {
     background: #fff;
     border: 1px solid var(--border-color);
+    position: relative;
+}
+
+/* Elevate above sibling controls (e.g. boundary button) when panel is open */
+.basemap-picker.basemap-picker-open {
+    z-index: 1200;
 }
 
 .basemap-picker-btn {
