@@ -32,10 +32,10 @@ class BoundaryLayerManager {
                 url: './data/decentralized.geojson',
                 nameProperty: 'DECENTR',
                 style: {
-                    color: '#ffffff',   // white — top-level, most prominent
+                    color: '#c8c2bc',   // warm silver — top-level, less bright
                     weight: 2.2,
                     fillOpacity: 0,
-                    opacity: 0.9,
+                    opacity: 0.85,
                     interactive: false
                 },
                 defaultOn: true
@@ -46,7 +46,7 @@ class BoundaryLayerManager {
                 url: './data/peripheries.geojson',
                 nameProperty: 'REGION_GR',
                 style: {
-                    color: '#e8e8e8',   // light grey — mid level
+                    color: '#e8d4a0',   // creamy wheat — mid level
                     weight: 1.3,
                     fillOpacity: 0,
                     opacity: 0.85,
@@ -60,11 +60,10 @@ class BoundaryLayerManager {
                 url: './data/municipalities.geojson',
                 nameProperty: 'NAME',
                 style: {
-                    color: '#bbbbbb',   // grey — finest level, dashed
+                    color: '#c4a0b8',   // dusty mauve / velvet — finest level, solid
                     weight: 0.8,
                     fillOpacity: 0,
                     opacity: 0.8,
-                    dashArray: '3 5',
                     interactive: true
                 },
                 defaultOn: false
