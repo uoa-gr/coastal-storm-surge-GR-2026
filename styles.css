@@ -2745,6 +2745,19 @@ body.sidebar-collapsed .rail-btn:hover {
     min-width: 0;
 }
 
+.welcome-logo-row {
+    display: flex;
+    align-items: center;
+    gap: 0.875rem;
+}
+
+.welcome-logo {
+    height: 52px;
+    width: auto;
+    flex-shrink: 0;
+    object-fit: contain;
+}
+
 .welcome-modal-subtitle {
     margin: 0;
     color: var(--text-secondary);
@@ -2787,6 +2800,15 @@ body.sidebar-collapsed .rail-btn:hover {
 
 .welcome-research p {
     margin: 0;
+}
+
+.welcome-team-label {
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+    margin-bottom: 0.4rem !important;
 }
 
 .welcome-citation {
@@ -3521,6 +3543,10 @@ body.sidebar-open {
     .welcome-modal .modal-content {
         max-width: 95%;
         padding: 0;
+    }
+
+    .welcome-logo {
+        height: 40px;
     }
 
     .welcome-intro,
