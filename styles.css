@@ -1910,30 +1910,12 @@ body.sidebar-collapsed .rail-btn:hover {
     line-height: 1.5;
 }
 
-/* Hover buffer so cursor can move from node to tooltip without closing */
-.minimal-tooltip::after {
-    content: '';
-    display: block;
-    position: absolute;
-    inset: -16px;
-    background: transparent;
-    pointer-events: auto;
-}
-
-.minimal-tooltip .tooltip-content,
-.minimal-tooltip .tooltip-body,
-.minimal-tooltip .tooltip-title,
-.minimal-tooltip .tooltip-impact {
-    position: relative;
-    z-index: 1;
-}
-
 .minimal-tooltip::before {
     display: none;
 }
 
-.leaflet-tooltip::before,
-.leaflet-tooltip::after {
+/* Hide the default Leaflet tooltip arrow triangle */
+.leaflet-tooltip::before {
     display: none;
 }
 

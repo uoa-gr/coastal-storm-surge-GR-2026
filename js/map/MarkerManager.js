@@ -124,7 +124,6 @@ class MarkerManager {
      */
     createTooltipContent(flood) {
         const isPriority = flood?.natura_flag === 'YES' || Number(flood?.deaths_toll_int) === 1;
-        const naturaStatus = isPriority ? 'Εντός Natura 2000' : 'Εκτός Natura 2000';
         const impact = flood.short_damage || flood.cause_of_flood;
         const cause = impact ? escapeHtml(impact) : '';
         const location = escapeHtml(flood.location_name || 'Άγνωστη τοποθεσία');
@@ -132,12 +131,18 @@ class MarkerManager {
         const truncatedImpact = cause.length > 200 ? `${cause.slice(0, 200)}…` : cause;
 
         const prefix = escapeHtml(flood.image_prefix || String(flood.id || ''));
+
+        // Image wrap starts hidden (display:none) to avoid size-jump when the image
+        // fails to load. The inline onload shows the wrap once any format succeeds.
+        // The onerror chain tries jpg → png → webp; on final failure onerror is
+        // cleared and the wrap simply stays hidden (no shrink flash).
         const imgHtml = prefix ? `
-            <div class="tooltip-image-wrap">
+            <div class="tooltip-image-wrap" style="display:none">
                 <img class="tooltip-img"
                      src="assets/images/${prefix}.jpg"
                      alt="${location}"
-                     onerror="this.src='assets/images/${prefix}.png';this.onerror=function(){this.src='assets/images/${prefix}.webp';this.onerror=function(){this.closest('.tooltip-image-wrap').style.display='none';};};"
+                     onload="this.closest('.tooltip-image-wrap').style.display=''"
+                     onerror="this.src='assets/images/${prefix}.png';this.onerror=function(){this.src='assets/images/${prefix}.webp';this.onerror=null;}"
                 >
             </div>` : '';
 
@@ -302,7 +307,14 @@ class MarkerManager {
         const { direction, offset } = this.getTooltipLayout(marker, tooltipEl);
         tooltip.options.direction = direction;
         tooltip.options.offset = offset;
-        tooltip.update();
+
+        // Use _updatePosition directly to reposition without re-injecting tooltip HTML
+        // (tooltip.update() calls _updateContent which resets innerHTML and loses DOM state)
+        if (typeof tooltip._updatePosition === 'function') {
+            tooltip._updatePosition();
+        } else {
+            tooltip.update();
+        }
     }
 
     /**
@@ -391,7 +403,9 @@ class MarkerManager {
             }
         });
 
-        // Add tooltip
+        // Add tooltip — interactive so the cursor can hover over it without it closing.
+        // With interactive:true Leaflet does NOT bind its own mouseover/mouseout handlers,
+        // so all open/close logic is managed here.
         const tooltipContent = this.createTooltipContent(flood);
         marker.bindTooltip(tooltipContent, {
             direction: 'top',
@@ -401,14 +415,15 @@ class MarkerManager {
             className: 'minimal-tooltip'
         });
 
-        // Replace default instant-close behavior with delayed close
-        // so tooltip remains available while moving cursor toward it.
-        marker.off('mouseout', marker.closeTooltip, marker);
-
         marker.on('mouseover', () => {
             this.clearTooltipCloseTimer(marker);
-            this.updateTooltipLayout(marker);
-            marker.openTooltip();
+            // Guard: avoid calling openTooltip when already open — repeated calls
+            // trigger unnecessary DOM updates that cause flickering.
+            if (!marker.isTooltipOpen()) {
+                marker.openTooltip();
+                // Layout is set in the tooltipopen handler (fires synchronously
+                // inside openTooltip before the browser renders).
+            }
         });
 
         marker.on('mouseout', () => {
@@ -416,8 +431,34 @@ class MarkerManager {
         });
 
         marker.on('tooltipopen', () => {
+            // Compute and apply the best on-screen position now that the element
+            // is in the DOM (actual dimensions available).
             this.updateTooltipLayout(marker);
             this.bindTooltipHoverBuffer(marker);
+
+            // If the tooltip contains an image that is still loading (wrap starts
+            // hidden), reposition once it loads so the larger tooltip stays
+            // within the viewport.
+            const tooltipEl = marker.getTooltip()?.getElement?.();
+            const img = tooltipEl?.querySelector('.tooltip-img');
+            if (img) {
+                if (img.complete && img.naturalWidth > 0) {
+                    // Cached image: onload may fire async, force-show wrap now
+                    const wrap = img.closest('.tooltip-image-wrap');
+                    if (wrap && wrap.style.display === 'none') {
+                        wrap.style.display = '';
+                        this.updateTooltipLayout(marker);
+                    }
+                } else if (!img.complete) {
+                    const onImgLoad = () => {
+                        img.removeEventListener('load', onImgLoad);
+                        if (marker.isTooltipOpen()) {
+                            this.updateTooltipLayout(marker);
+                        }
+                    };
+                    img.addEventListener('load', onImgLoad);
+                }
+            }
         });
 
         marker.on('tooltipclose', () => {
