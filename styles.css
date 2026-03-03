@@ -2802,13 +2802,13 @@ body.sidebar-collapsed .rail-btn:hover {
     margin: 0;
 }
 
-.welcome-team-label {
-    font-size: 0.7rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    color: var(--text-muted);
-    margin-bottom: 0.4rem !important;
+.welcome-research .welcome-logo-row {
+    align-items: center;
+}
+
+.welcome-research .welcome-logo-row p + p {
+    margin-top: 0.15rem;
+    font-size: 0.85rem;
 }
 
 .welcome-citation {

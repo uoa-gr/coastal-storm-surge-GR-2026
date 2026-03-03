@@ -61,13 +61,8 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <div class="welcome-modal-title">
-                        <div class="welcome-logo-row">
-                            <img src="ekpa-logo.webp" alt="Λογότυπο ΕΚΠΑ" class="welcome-logo">
-                            <div>
-                                <h3>Πληγείσες Παράκτιες Περιοχές</h3>
-                                <p class="welcome-modal-subtitle">Κακοκαιρία Φεβρουαρίου 2026</p>
-                            </div>
-                        </div>
+                        <h3>Πληγείσες Παράκτιες Περιοχές</h3>
+                        <p class="welcome-modal-subtitle">Κακοκαιρία Φεβρουαρίου 2026</p>
                     </div>
                     <button class="modal-close" id="close-welcome" aria-label="Κλείσιμο εισαγωγικού παραθύρου">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -79,19 +74,24 @@
                 </div>
                 <div class="modal-body">
                     <div class="welcome-intro">
-                        <p>Διαδραστική γεωγραφική πλατφόρμα καταγραφής και οπτικοποίησης των παράκτιων περιοχών που επλήγησαν από ακραία καιρικά φαινόμενα τον Φεβρουάριο του 2026 στην Ελλάδα. Ο χάρτης ενσωματώνει γεωχωρικά δεδομένα, φωτογραφική τεκμηρίωση και πληροφορίες για την κατάσταση Natura 2000 κάθε περιοχής.</p>
+                        <p>Διαδραστική γεωγραφική πλατφόρμα οπτικοποίησης των παράκτιων περιοχών που επλήγησαν από
+                            ακραία καιρικά φαινόμενα τον Φεβρουάριο του 2026 στην Ελλάδα και στις οποίες οι αρμόδιες
+                            αρχές κήρυξαν κατάσταση εκτάκτου ανάγκης.</p>
                     </div>
 
                     <div class="welcome-research">
-                        <p class="welcome-team-label">Ερευνητική Ομάδα</p>
-                        <p>
-                            <strong>Εθνικό και Καποδιστριακό Πανεπιστήμιο Αθηνών</strong><br>
-                            Ομάδα <a href="http://scholar.uoa.gr/evelpidou/home" target="_blank" rel="noopener noreferrer">Καθηγήτριας Νίκης Ευελπίδου</a>
-                        </p>
+                        <div class="welcome-logo-row">
+                            <img src="ekpa-logo.webp" alt="Λογότυπο ΕΚΠΑ" class="welcome-logo">
+                            <div>
+                                <p><strong>Εθνικό και Καποδιστριακό Πανεπιστήμιο Αθηνών</strong></p>
+                                <p>Ομάδα <a href="http://scholar.uoa.gr/evelpidou/home" target="_blank"
+                                    rel="noopener noreferrer">Καθηγήτριας Νίκης Ευελπίδου</a></p>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="welcome-database-info">
-                        <p>Τα δεδομένα προέρχονται από επίσημες αποφάσεις ΑΔΑ κήρυξης σε κατάσταση εκτάκτου ανάγκης και τεκμηριωμένη καταγραφή ανά πληγείσα περιοχή.</p>
+                        <p>Πηγές: αποφάσεις κήρυξης κατάστασης εκτάκτου ανάγκης (ΑΔΑ) · επιτόπια καταγραφή πληγεισών περιοχών.</p>
                     </div>
 
                     <div class="welcome-footer">
@@ -106,7 +106,8 @@
             <div class="error-banner-content">
                 <div class="error-banner-icon">⚠️</div>
                 <div class="error-banner-message" id="error-banner-message"></div>
-                <button class="error-banner-close" id="error-banner-close" aria-label="Κλείσιμο μηνύματος σφάλματος">×</button>
+                <button class="error-banner-close" id="error-banner-close"
+                    aria-label="Κλείσιμο μηνύματος σφάλματος">×</button>
             </div>
         </div>
 
@@ -238,7 +239,8 @@
                             <!-- Regional Unit Filter -->
                             <div class="filter-group">
                                 <label>Περιφερειακή Ενότητα:</label>
-                                <button class="filter-selector" data-filter="regionalUnit" id="regional-unit-filter-btn">
+                                <button class="filter-selector" data-filter="regionalUnit"
+                                    id="regional-unit-filter-btn">
                                     <span class="filter-selector-value">Όλες οι Περιφερειακές Ενότητες</span>
                                     <span class="filter-selector-badge" id="regional-unit-filter-badge"></span>
                                     <svg class="filter-selector-arrow" width="16" height="16" viewBox="0 0 24 24"
@@ -283,7 +285,8 @@
                         <div class="search-panel">
                             <label for="global-search-input" class="search-label">Καθολική Αναζήτηση</label>
                             <input id="global-search-input" type="text" class="search-input"
-                                placeholder="Αναζήτηση τοποθεσίας, δήμου, περιφέρειας ή ημερομηνίας…" autocomplete="off" />
+                                placeholder="Αναζήτηση τοποθεσίας, δήμου, περιφέρειας ή ημερομηνίας…"
+                                autocomplete="off" />
                             <div id="global-search-results" class="search-results hidden" aria-live="polite"></div>
                             <div id="global-search-selected" class="search-selected hidden"></div>
                             <div class="search-hint">
@@ -332,7 +335,8 @@
                 <div class="modal-body">
                     <div class="reference-item">
                         <p class="citation-label">Κύριες πηγές:</p>
-                        <p>Αποφάσεις κήρυξης έκτακτης ανάγκης (ΑΔΑ) από τη Διαύγεια, διοικητικά όρια και επιμελημένη περιγραφή επιπτώσεων ανά συμβάν.</p>
+                        <p>Αποφάσεις κήρυξης έκτακτης ανάγκης (ΑΔΑ) από τη Διαύγεια, διοικητικά όρια και επιμελημένη
+                            περιγραφή επιπτώσεων ανά συμβάν.</p>
                     </div>
                 </div>
             </div>
