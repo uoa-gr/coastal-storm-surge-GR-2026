@@ -52,7 +52,7 @@ class BoundaryLayerManager {
                     opacity: 0.38,
                     interactive: true
                 },
-                defaultOn: false
+                defaultOn: true
             },
             {
                 id: 'municipalities',
