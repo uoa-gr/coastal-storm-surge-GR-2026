@@ -47,14 +47,16 @@ class StatusBar {
         this.container.className = 'map-status-bar';
 
         this.container.innerHTML = `
-            <div class="status-bar-left">
-                <div class="status-scale" id="status-scale"></div>
-            </div>
-            <div class="status-bar-legend">
-                <span class="legend-dot natura"></span>
-                <span class="legend-text">Εντός Natura 2000</span>
-                <span class="legend-dot standard"></span>
-                <span class="legend-text">Εκτός Natura 2000</span>
+            <div class="status-bar-left-col">
+                <div class="status-bar-legend">
+                    <span class="legend-dot natura"></span>
+                    <span class="legend-text">Εντός Natura 2000</span>
+                    <span class="legend-dot standard"></span>
+                    <span class="legend-text">Εκτός Natura 2000</span>
+                </div>
+                <div class="status-bar-left">
+                    <div class="status-scale" id="status-scale"></div>
+                </div>
             </div>
             <div class="status-bar-right">
                 <div class="status-item">
