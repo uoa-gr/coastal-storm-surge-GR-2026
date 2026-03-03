@@ -1111,14 +1111,20 @@ body.sidebar-collapsed .rail-btn:hover {
 
 .status-bar-legend {
     display: flex;
-    align-items: center;
-    gap: 0.4rem;
+    flex-direction: column;
+    gap: 0.3rem;
     font-size: 0.7rem;
     color: #1e1e1e;
     background: #ffffff;
     border-radius: 6px;
-    padding: 0.2rem 0.75rem;
+    padding: 0.35rem 0.75rem;
     box-shadow: 0 1px 4px rgba(0,0,0,0.12);
+}
+
+.legend-row {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
 }
 
 .legend-dot {
@@ -1136,7 +1142,6 @@ body.sidebar-collapsed .rail-btn:hover {
 .legend-dot.standard {
     background: #000000;
     border: 1.5px solid #aaaaaa;
-    margin-left: 0.6rem;
 }
 
 .legend-text {
@@ -1294,56 +1299,37 @@ body.sidebar-collapsed .rail-btn:hover {
     background: rgba(0,0,0,0.06);
 }
 
-.status-scale .leaflet-control-scale {
-    margin: 0;
-    background: transparent;
-    border: none;
+/* Cartographic scale bar */
+.carto-scale {
     display: flex;
-    align-items: center;
+    flex-direction: column;
+    align-items: flex-start;
 }
 
-.status-scale .leaflet-control-scale-line {
-    background: transparent;
-    border: none;
-    color: #1e1e1e;
-    font-size: 0.7rem;
+.carto-scale-bar {
+    display: flex;
+    height: 7px;
+    border: 1.5px solid #1e1e1e;
+    overflow: hidden;
+    box-sizing: border-box;
+}
+
+.carto-seg {
+    flex: 1;
+    height: 100%;
+}
+
+.carto-seg-b { background: #1e1e1e; }
+.carto-seg-w { background: #ffffff; }
+
+.carto-scale-label {
+    font-size: 0.65rem;
     font-weight: 500;
-    line-height: 1;
-    padding: 0 6px;
-    margin: 0;
-    text-shadow: none;
-    white-space: nowrap;
+    color: #1e1e1e;
+    margin-top: 2px;
     text-align: center;
-    position: relative;
-}
-
-.status-scale .leaflet-control-scale-line::before,
-.status-scale .leaflet-control-scale-line::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    width: 6px;
-    height: 0;
-    border-top: 2px solid #1e1e1e;
-    transform: translateY(-50%);
-}
-
-.status-scale .leaflet-control-scale-line::before {
-    left: 0;
-    border-left: 2px solid #1e1e1e;
-    height: 8px;
-    top: 50%;
-    transform: translateY(-50%);
-    border-top: none;
-}
-
-.status-scale .leaflet-control-scale-line::after {
-    right: 0;
-    border-right: 2px solid #1e1e1e;
-    height: 8px;
-    top: 50%;
-    transform: translateY(-50%);
-    border-top: none;
+    width: 100%;
+    letter-spacing: 0.02em;
 }
 
 @media (max-width: 480px) {
