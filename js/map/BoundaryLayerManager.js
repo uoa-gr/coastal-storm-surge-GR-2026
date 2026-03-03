@@ -32,10 +32,10 @@ class BoundaryLayerManager {
                 url: './data/decentralized.geojson',
                 nameProperty: 'DECENTR',
                 style: {
-                    color: '#c8c2bc',   // warm silver — top-level, less bright
+                    color: '#c8c2bc',   // warm silver — top-level
                     weight: 2.2,
                     fillOpacity: 0,
-                    opacity: 0.85,
+                    opacity: 0.38,
                     interactive: false
                 },
                 defaultOn: true
@@ -49,7 +49,7 @@ class BoundaryLayerManager {
                     color: '#e8d4a0',   // creamy wheat — mid level
                     weight: 1.3,
                     fillOpacity: 0,
-                    opacity: 0.85,
+                    opacity: 0.38,
                     interactive: true
                 },
                 defaultOn: false
@@ -63,7 +63,7 @@ class BoundaryLayerManager {
                     color: '#c4a0b8',   // dusty mauve / velvet — finest level, solid
                     weight: 0.8,
                     fillOpacity: 0,
-                    opacity: 0.8,
+                    opacity: 0.35,
                     interactive: true
                 },
                 defaultOn: false
