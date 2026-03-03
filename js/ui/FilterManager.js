@@ -24,8 +24,9 @@ class FilterManager {
 
         // Lookup map for location → municipality (built lazily)
         this.locationMunicipalityMap = null;
-        // Sub-label getter for the currently open modal (set per openFilterModal call)
+        // Sub-label getter for search matching; display-parts getter for rendering
         this._activeGetSubLabel = null;
+        this._activeGetDisplayParts = null;
 
         // Currently active filter in modal
         this.activeFilterKey = null;
@@ -224,9 +225,25 @@ class FilterManager {
             if (!this.locationMunicipalityMap) {
                 this.locationMunicipalityMap = this._buildLocationMunicipalityMap();
             }
-            this._activeGetSubLabel = (value) => this.locationMunicipalityMap.get(String(value)) || null;
+            const municipalityOf = (v) => this.locationMunicipalityMap.get(String(v)) || null;
+            this._activeGetSubLabel = municipalityOf;
+            // Display parts: if location name has form "Prefix (Content)", surface Content as
+            // the primary label so the actual place name is not buried in parentheses.
+            this._activeGetDisplayParts = (value) => {
+                const str = String(value);
+                const parenIdx = str.indexOf('(');
+                const mun = municipalityOf(value);
+                if (parenIdx !== -1 && str.endsWith(')')) {
+                    const prefix = str.slice(0, parenIdx).trim();
+                    const content = str.slice(parenIdx + 1, -1).trim();
+                    const sub = [prefix, mun ? `Δήμος ${mun}` : null].filter(Boolean).join(' · ');
+                    return { primary: content, secondary: sub };
+                }
+                return { primary: str, secondary: mun ? `Δήμος ${mun}` : null };
+            };
         } else {
             this._activeGetSubLabel = null;
+            this._activeGetDisplayParts = null;
         }
 
         // Set title
@@ -280,31 +297,32 @@ class FilterManager {
         const unavailableOptions = allOptionsList.filter(v => !availableSet.has(String(v)));
 
         // Render available options
-        this.renderModalList(availableOptions, currentValue, false, config, this._activeGetSubLabel);
+        this.renderModalList(availableOptions, currentValue, false, config, this._activeGetDisplayParts);
 
         // Render unavailable options
-        this.renderUnavailableList(unavailableOptions, config, this._activeGetSubLabel);
+        this.renderUnavailableList(unavailableOptions, config, this._activeGetDisplayParts);
     }
 
-    _buildOptionEl(value, config, getSubLabel, className, onClick) {
+    _buildOptionEl(value, config, getDisplayParts, className, onClick) {
         const div = document.createElement('div');
         div.className = className;
 
-        const displayValue = config?.formatValue ? config.formatValue(value) : value;
-        const subLabel = getSubLabel ? getSubLabel(value) : null;
+        const parts = getDisplayParts ? getDisplayParts(value) : null;
 
-        if (subLabel) {
+        if (parts) {
             const primary = document.createElement('span');
             primary.className = 'filter-modal-option-primary';
-            primary.textContent = displayValue;
-
-            const secondary = document.createElement('span');
-            secondary.className = 'filter-modal-option-secondary';
-            secondary.textContent = `Δήμος ${subLabel}`;
-
+            primary.textContent = parts.primary;
             div.appendChild(primary);
-            div.appendChild(secondary);
+
+            if (parts.secondary) {
+                const secondary = document.createElement('span');
+                secondary.className = 'filter-modal-option-secondary';
+                secondary.textContent = parts.secondary;
+                div.appendChild(secondary);
+            }
         } else {
+            const displayValue = config?.formatValue ? config.formatValue(value) : value;
             div.textContent = displayValue;
         }
 
@@ -316,7 +334,7 @@ class FilterManager {
         return div;
     }
 
-    renderModalList(options, currentValue, isFiltered = false, config = null, getSubLabel = null) {
+    renderModalList(options, currentValue, isFiltered = false, config = null, getDisplayParts = null) {
         const list = this.modalElements.list;
         if (!list) return;
 
@@ -332,7 +350,7 @@ class FilterManager {
 
         // If a value is selected, show it first as "selected" (not clickable)
         if (currentValue && currentValue !== '') {
-            const selectedDiv = this._buildOptionEl(currentValue, config, getSubLabel, 'filter-modal-option selected-current', null);
+            const selectedDiv = this._buildOptionEl(currentValue, config, getDisplayParts, 'filter-modal-option selected-current', null);
             selectedDiv.title = 'Τρέχουσα επιλογή - πατήστε "Καθαρισμός Επιλογής" για αλλαγή';
             list.appendChild(selectedDiv);
         }
@@ -340,12 +358,12 @@ class FilterManager {
         // Show remaining available options (excluding the selected one)
         options.forEach(value => {
             if (String(value) === String(currentValue)) return;
-            const div = this._buildOptionEl(value, config, getSubLabel, 'filter-modal-option', () => this.selectFilterValue(value));
+            const div = this._buildOptionEl(value, config, getDisplayParts, 'filter-modal-option', () => this.selectFilterValue(value));
             list.appendChild(div);
         });
     }
 
-    renderUnavailableList(options, config = null, getSubLabel = null) {
+    renderUnavailableList(options, config = null, getDisplayParts = null) {
         const section = this.modalElements.unavailableSection;
         const list = this.modalElements.unavailableList;
 
@@ -360,7 +378,7 @@ class FilterManager {
         list.replaceChildren();
 
         options.forEach(value => {
-            const div = this._buildOptionEl(value, config, getSubLabel, 'filter-modal-option unavailable', null);
+            const div = this._buildOptionEl(value, config, getDisplayParts, 'filter-modal-option unavailable', null);
             list.appendChild(div);
         });
     }
@@ -376,6 +394,7 @@ class FilterManager {
         const allOptionsList = this.allOptions[optionsKey] || availableOptions;
         const currentValue = this.filterElements[this.activeFilterKey]?.value || '';
         const getSubLabel = this._activeGetSubLabel;
+        const getDisplayParts = this._activeGetDisplayParts;
 
         const matches = (v) => {
             if (!searchTerm) return true;
@@ -394,8 +413,8 @@ class FilterManager {
         const unavailableOptions = allOptionsList.filter(v => !availableSet.has(String(v)));
         const filteredUnavailable = unavailableOptions.filter(matches);
 
-        this.renderModalList(filteredAvailable, currentValue, true, config, getSubLabel);
-        this.renderUnavailableList(filteredUnavailable, config, getSubLabel);
+        this.renderModalList(filteredAvailable, currentValue, true, config, getDisplayParts);
+        this.renderUnavailableList(filteredUnavailable, config, getDisplayParts);
     }
 
     async selectFilterValue(value) {
