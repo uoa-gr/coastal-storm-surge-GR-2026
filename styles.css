@@ -1102,6 +1102,7 @@ body.sidebar-collapsed .rail-btn:hover {
 .status-bar-left {
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 1rem;
     background: #ffffff;
     border-radius: 6px;
