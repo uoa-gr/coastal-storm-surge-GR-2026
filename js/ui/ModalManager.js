@@ -268,7 +268,7 @@ class ModalManager {
             { key: 'region_name', label: 'Περιφέρεια' },
             { key: 'decentralized_admin', label: 'Αποκεντρωμένη Διοίκηση' },
             { key: 'municipal_unit', label: 'Δημοτική Ενότητα' },
-            { key: 'community', label: 'Κοινότητα' }
+            { key: 'community', label: 'Δημοτική Κοινότητα' }
         ];
 
         const renderMetaCard = (field) => {
