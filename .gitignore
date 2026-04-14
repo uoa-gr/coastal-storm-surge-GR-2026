@@ -1,0 +1,9 @@
+# EEA Natura 2000 bundle — 2.5 GB, download locally, do not commit
+eea_v_3035_100_k_natura2000_p_2024_v01_r00.zip
+data/natura/natura2000_GR_end2024.geojson
+
+# Local data backup
+data/events.geojson.bak
+
+# Diavgeia research byproducts (CSVs, raw PDFs, extracted text, intermediate features)
+data/diavgeia/
